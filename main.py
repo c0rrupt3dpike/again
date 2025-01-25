@@ -19,8 +19,17 @@ async def read_users1():
 async def read_users2():
     return ["pops", "other lad"]
 
+fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}, {"item:name": "Tuz"}]
+
+
+@app.get("/items/")
+async def read_item(skip: int = 0, limit: int = 10):
+    return fake_items_db[skip : skip + limit]
+
 @app.get("/items/{item_id}")
-async def read_item(item_id: int):
+async def read_item(item_id: str, q: str | None = None):
+    if q:
+        return {"item_id": item_id, "q": q}
     return {"item_id": item_id}
 
 @app.get("/buses/{buses_id}")
@@ -41,7 +50,7 @@ async def read_user_me():
 async def read_user(user_id: str):
     return {"user_id": user_id}
 
-@app.get("/counts/{}")
+@app.get("/counts/{model_name}")
 async def read_models(model_name: ModelName):
     if model_name is ModelName.cnn:
         return {"model_name": model_name, "message": "Deep Learning model"}

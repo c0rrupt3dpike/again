@@ -32,6 +32,18 @@ async def read_item(item_id: str, q: str | None = None):
         return {"item_id": item_id, "q": q}
     return {"item_id": item_id}
 
+@app.get("/users/{user_id}/tracks/{track_id}")
+async def track(user_id: int, track_id: str, q: str | None = None, short: bool=False):
+    track = {"track_id": {track_id}, "Musician": user_id,}
+
+    if q:
+        track.update({"q": q})
+    if not short:
+        track.update(
+            {"description": "This is an amazing track that has a long description"}
+        )
+    return track
+
 @app.get("/buses/{buses_id}")
 async def bus(buses_id: int):
     buspath = {"1": "Goes to Kapchagai",

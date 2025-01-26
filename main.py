@@ -105,6 +105,6 @@ async def link_shortener(link_to_shorten: LinkToShorten):
 
 @app.get("/{short_link}")
 async def get_link(short_link: str):
-    destination = short_links.get(short_link)
+    destination = await short_links.get(short_link)
     print(destination)
     return RedirectResponse(url=destination)

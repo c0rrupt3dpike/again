@@ -37,7 +37,7 @@ async def root():
 async def link_shortener(link_to_shorten: LinkToShorten, db: AsyncSession = Depends(get_db)):
     short_code = await short_code_generate(db)
 
-    short_link = await ShortenedURL(original_url=link_to_shorten.link, short_code=short_code)
+    short_link = ShortenedURL(original_url=link_to_shorten.link, short_code=short_code)
     db.add(short_link)
     await db.commit()
     return {"Ur shortened link": f"http://127.0.0.1:8000/{short_code}"}
@@ -51,7 +51,6 @@ async def get_link(short_code: str, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="URL not found")
     
     url_entry.redirect_count += 1
-    await db.commit()  # ✅ Save changes
-    await db.refresh(url_entry)  # Optional, ensures updated data is loaded
-
-    return RedirectResponse(url=url_entry.original_url, status_code=308)
+    await db.commit()
+    await db.refresh(url_entry)
+    return RedirectResponse(url=url_entry.original_url)
